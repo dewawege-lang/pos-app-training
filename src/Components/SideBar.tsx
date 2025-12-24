@@ -36,7 +36,7 @@ export default function SideBar() {
     setSidebarOpen(!sidebarOpen)
   }
   return (
-    <div className={`sm:w-[${sidebarOpen?"280" : "60"}px] h-screen bg-darkbg2 p-4 flex flex-col justify-between`}>
+    <div className={`sm:w-[${sidebarOpen?"300" : "60"}px] h-screen bg-darkbg2 p-4 flex flex-col justify-between`}>
       <div>
         {/* header */}
         <button onClick={handleSidebarOpen} className="centered gap-3 w-full font-semibold text-2xl bg-accent1 hover:bg-accent1/70 py-2 rounded-2xl">
