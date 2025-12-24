@@ -15,7 +15,7 @@ export default function SideBar() {
       {
         icon: <IconDashboard/>,
         title: "Dashboard",
-        url: "/dashboard"
+        url: "/"
       },
       {
         icon: <IconBurger/>,

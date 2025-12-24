@@ -32,9 +32,9 @@ export default function RootLayout({
               {/* sidebar */}
               <SideBar />
               {/* content */}
-              <div className="sm:w-[60%] w-full h-screen bg-black">{children}</div>
+              <div className="w-full h-screen bg-slate-950 p-2">{children}</div>
               {/* sheet */}
-              <div className="sm:w-[300px] h-screen bg-slate-700"></div>
+              <div className=" h-screen bg-slate-700"></div>
             </div>
         
       </body>
