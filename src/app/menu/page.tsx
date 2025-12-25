@@ -26,7 +26,7 @@ export default function MenuPage () {
                 },
                 {
                     imgUrl:"/image/2.png",
-                    dishName:"Salted Pasta with mushroom sauce",
+                    dishName:"Salted pasta with mushroom sauce",
                     price: 2.69,
                     stock: 11
                 },
@@ -130,22 +130,22 @@ export default function MenuPage () {
             <div className="px-4 mt-4">
                 <div className="flex items-center justify-between">
                     <h1>Choose Dishes</h1>
-                    <select name="" id="">
+                    <select name="" id="" className="bg-darkbg2 p-1.5">
                         <option value="">Dine In</option>
                         <option value="">Take Away</option>
                     </select>
                 </div>
-                <div className="grid grid-cols-5 gap-5 ">
+                <div className="grid grid-cols-5 gap-x-8 gap-y-17 mt-15">
                     {menus.find(menu => menu.type === activeTab )?.items.map((item, index) => (
-                        <div key={index} className="bg-search flex flex-col gap-1 items-center text-white">
+                        <div key={index} className="bg-darkbg2 flex flex-col gap-1 items-center text-white rounded-2xl p-2">
                             {item.imgUrl !== ""? (
-                                <Image src={item.imgUrl} alt={item.dishName} width={132} height={132} />
+                                <Image src={item.imgUrl} alt={item.dishName} width={132} height={132} className="m-[-50px]" />
                             ) : (
                             <div className="size-33 rounded-full bg-primary m-52"></div> 
                             )}
-                            <h3 className="centered">{item.dishName}</h3>
-                            <p>{item.price}</p>
-                            <p>{item.stock} Bowls available</p>
+                            <h3 className="centered mt-15 text-center">{item.dishName}</h3>
+                            <p className="text-center">$ {item.price}</p>
+                            <p className="text-center text-gray-400">{item.stock} Bowls available</p>
                         </div>
                     ))}
                 </div>
