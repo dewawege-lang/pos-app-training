@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { IconTrash } from "@tabler/icons-react"
 
-export default function BillingSideBar({ orders, setOrders, activeBillingTab, setActiveBillingTab }) {
+export default function BillingSideBar({ orders, setOrders, activeBillingTab, setActiveBillingTab, onContinue }) {
     const tabs = ["Dine in", "Take Away", "Delivery"]
     
     // Memfilter pesanan sesuai tab billing yang sedang dibuka
@@ -15,7 +15,7 @@ export default function BillingSideBar({ orders, setOrders, activeBillingTab, se
         setOrders(orders.filter(order => 
             !(order.dishName === itemToDelete.dishName && order.type === itemToDelete.type)
         ));
-    }
+    }  
 
     return (
         <div className="flex flex-col bg-darkbg2 p-6 w-full h-full shadow-2xl border-l border-gray-700">
@@ -104,7 +104,9 @@ export default function BillingSideBar({ orders, setOrders, activeBillingTab, se
                         $ {filteredOrders.reduce((acc, curr) => acc + (curr.price * curr.qty), 0).toFixed(2)}
                     </span>
                 </div>
-                <button className="w-full bg-primary hover:bg-opacity-90 py-4 rounded-xl text-white font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+                <button 
+                onClick={onContinue} 
+                className="w-full bg-primary hover:bg-opacity-90 py-4 rounded-xl text-white font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
                     Continue to Payment
                 </button>
             </div>

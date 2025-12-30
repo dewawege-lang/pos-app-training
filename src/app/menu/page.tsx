@@ -1,11 +1,10 @@
 "use client";
 
-import { IconSearch } from "@tabler/icons-react";
+import { IconCaretDownFilled, IconCaretUpDownFilled, IconSearch } from "@tabler/icons-react";
 import Image from "next/image";
 import { useState } from "react";
 import BillingSideBar from "@/Components/BillingSideBar";
-import { link } from "fs";
-import Link from "next/link";
+import PaymentModal from "@/Components/PaymentModal";
 
 export default function MenuPage() {
   const today = new Date();
@@ -19,10 +18,15 @@ export default function MenuPage() {
     "Desert",
   ];
 
-  // Perbaikan: Pastikan nama variabel konsisten (M besar)
+  
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs[0]);
   const [orders, setOrders] = useState([]);
   const [activeBillingTab, setActiveBillingTab] = useState("Dine in");
+  const [activePaymentTab, setActivePaymentTab] =useState("Cash");
+
+  const [showPayment, setShowPayment] = useState(false);
+  const currentOrders = orders.filter(o => o.type === activeBillingTab);
+  const subtotal = currentOrders.reduce((acc, curr) => acc+ (curr.price * curr.qty), 0);
 
   const menus = [
     {
@@ -325,24 +329,24 @@ export default function MenuPage() {
 
         {/* Dishes Grid */}
         <div className="mt-4 pb-20">
-          <div className="flex items-center justify-between py-2 ">
-            <h1 className="font-medium text-white text-2xl">Choose Dishes</h1>
-          </div>
+          <div className="flex justify-between mt-5 mb-15">
+            <div className="flex items-center justify-between py-2 ">
+              <h1 className="font-medium text-white text-2xl">Choose Dishes</h1>
+            </div>
 
-          <div className="relative inline-block text-left">
-            <select
-              value={activeBillingTab}
-              onChange={(e) => setActiveBillingTab(e.target.value)}
-              className="bg-darkbg2 text-white border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer appearance-none pr-10"
-            >
+            <div className=" relative inline-block text-left">
+              <select
+                value={activeBillingTab}
+                onChange={(e) => setActiveBillingTab(e.target.value)}
+                className="bg-darkbg2 text-white border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer appearance-none pr-10"
+              >
                 <option value="Dine in">Dine in</option>
                 <option value="Take Away">Take Away</option>
                 <option value="Delivery">Delivery</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white">
-                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                {/* <path d="M9.293 12.951.707.707L" */}
-                </svg>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white">
+                <IconCaretDownFilled />
+              </div>
             </div>
           </div>
 
@@ -352,18 +356,18 @@ export default function MenuPage() {
               ?.items.map((item, index) => (
                 <div
                   key={index}
-                  onClick={() => addToOrder(item)} // Perbaikan: Typo dihapus
-                  className="bg-darkbg2 flex flex-col gap-1 items-center h-75 text-white rounded-2xl p-2 transition-transform duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  onClick={() => addToOrder(item)}
+                  className="bg-darkbg2 flex flex-col gap-1 items-center h-75 text-white rounded-2xl p-2 transition-transform duration-300 hover:scale-110 active:scale-95 cursor-pointer"
                 >
                   <Image
                     src={item.imgUrl}
                     alt={item.dishName}
                     width={160}
                     height={160}
-                    className="m-[-50px] drop-shadow-2xl"
+                    className="mt-[-50px] drop-shadow-2xl"
                   />
-                  <div className="flex-1 flex flex-col justify-end pb-4 w-full">
-                    <h3 className="mt-18 px-4 text-center font-medium">
+                  <div className="flex-1 flex flex-col justify-end gap-3 pb-8 w-full">
+                    <h3 className="px-4 text-center font-medium">
                       {item.dishName}
                     </h3>
                     <p className="text-center my-2 text-white">
@@ -386,8 +390,18 @@ export default function MenuPage() {
           setOrders={setOrders}
           activeBillingTab={activeBillingTab}
           setActiveBillingTab={setActiveBillingTab}
+          onContinue={() => setShowPayment(true)}
         />
       </aside>
+      {/* Modal Overlay */}
+      {showPayment && (
+        <PaymentModal
+            orders={orders}
+            setOrders={setOrders}
+            subtotal={orders.reduce((acc, curr) => acc + (curr.price * curr.qty), 0)}
+            onClose={() => setShowPayment(false)}
+            />
+      )}
     </div>
   );
 }
