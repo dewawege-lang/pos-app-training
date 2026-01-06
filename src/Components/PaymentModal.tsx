@@ -10,10 +10,15 @@ import {
 } from "@tabler/icons-react";
 
 // 1. Tambahkan setOrders ke dalam list Props
-export default function PaymentModal({ orders, setOrders, onClose, activePaymentTab, setActivePaymentTab }) {
+export default function PaymentModal({
+  orders,
+  setOrders,
+  onClose,
+  activePaymentTab,
+  setActivePaymentTab,
+}) {
   // 2. Fungsi menghapus pesanan
   const deleteOrder = (itemToDelete) => {
-
     setOrders(
       orders.filter(
         (order) =>
@@ -51,24 +56,24 @@ export default function PaymentModal({ orders, setOrders, onClose, activePayment
 
           <div className="space-y-6">
             {orders.map((item, idx) => (
-              <div key={idx} className="flex flex-col gap-4">
+              <div key={idx} className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <div className="flex gap-4 items-center">
                     <div className="text-white">
                       <p className="font-medium">
                         {item.dishName}
-                        <span className="ml-2 text-[10px] bg-gray-700 px-2 py-0.5 rounded text-primary uppercase">
-                          {item.type}
-                        </span>
                       </p>
                       <p className="text-sm text-gray-500">$ {item.price}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-6 text-white">
+                  <div className="flex items-center gap-2 text-white">
+                    <span className="my-2 text-[10px] bg-gray-700 px-2 py-0.5 rounded text-primary uppercase text-nowrap">
+                      {item.type}
+                    </span>
                     <span className="bg-search px-4 py-2 rounded-lg border border-gray-700">
                       {item.qty}
                     </span>
-                    <span className="font-bold">
+                    <span className="font-bold text-nowrap">
                       $ {(item.qty * item.price).toFixed(2)}
                     </span>
                   </div>
@@ -115,8 +120,8 @@ export default function PaymentModal({ orders, setOrders, onClose, activePayment
               </div>
             ))}
             </div> */}
-            {/* Card Option Terpilih */}
-            <div className="flex justify-between gap-4 w">
+          {/* Card Option Terpilih */}
+          <div className="flex justify-between gap-4 w">
             <div className="border-2 border-primary bg-search p-4 rounded-xl flex flex-col items-center gap-2 relative cursor-pointer">
               <div className="absolute top-2 right-2 text-primary">
                 <IconCheck size={16} />
