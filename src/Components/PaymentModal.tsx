@@ -8,6 +8,7 @@ import {
   IconBrandPaypal,
   IconCash,
   IconClick,
+  IconQrcode,
 } from "@tabler/icons-react";
 import { act, useState } from "react";
 
@@ -98,6 +99,15 @@ export default function PaymentModal({
               </div>
             ))}
           </div>
+
+          {/* TOTAL */}
+          <div className="mt-5 mb-[-10px] px-2">end</div>
+          <div className=" fixed bottom-1 w-[420px] z-50 border-t mb-[-5] border-gray-700 py-3 bg-darkbg2">
+            <div className="flex justify-between text-white font-bold text-xl mb-1">
+              <span>Total</span>
+              <span className="pr-3 text-2xl">$ {subtotal.toFixed(2)}</span>
+            </div>
+          </div>
         </div>
 
         {/* BAGIAN 2: PAYMENT METHOD (Kanan) */}
@@ -132,21 +142,21 @@ export default function PaymentModal({
             {/* TOMBOL PAYPAL */}
             <button
               type="button"
-              onClick={() => setActivePaymentTab("Paypal")}
+              onClick={() => setActivePaymentTab("Qris")}
               className={`p-4 rounded-xl flex flex-col items-center gap-2 relative broder-2 transition-all ${
-                activePaymentTab === "Paypal"
+                activePaymentTab === "Qris"
                   ? "border-2 border-primary bg-search text-white"
                   : "border-gray-700 text-gray-500"
               }`}
             >
-              {activePaymentTab === "Paypal" && (
+              {activePaymentTab === "Qris" && (
                 <IconCheck
                   size={16}
                   className="absolute top-2 right-2 text-primary"
                 />
               )}
-              <IconBrandPaypal />
-              <span className="text-xs">Paypal</span>
+              <IconQrcode />
+              <span className="text-xs">Qris</span>
             </button>
 
             {/* TOMBOL CASH */}
@@ -186,7 +196,17 @@ export default function PaymentModal({
                   />
                 </div>
                 <div>
-                  <label className="text-white text-sm block mb-2">
+                  <label className="text-white text-sm block mb-2 mt-2">
+                    Bank
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="BCA / Mandiri / BNI / BRI, etc."
+                    className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label className="text-white text-sm block mb-2 mt-2">
                     Card Number
                   </label>
                   <input
@@ -195,24 +215,37 @@ export default function PaymentModal({
                     className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary"
                   />
                 </div>
-              </div>
-            )}
-
-            {/* Tampilan Jika Pilih PAYPAL */}
-            {activePaymentTab === "Paypal" && (
-              <div className="space-y-4 animate-in fade-in duration-900">
                 <div>
-                  <label className="text-white text-sm block mb-2">
-                    Paypal Email
+                  <label className="text-white text-sm block mb-2 mt-2">
+                    Aproval Code
                   </label>
                   <input
-                    type="email"
-                    placeholder="example@paypal.com"
+                    type="text"
+                    placeholder="847391"
                     className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary"
                   />
                 </div>
+              </div>
+            )}
+
+            {/* Tampilan Jika Pilih Qris */}
+            {activePaymentTab === "Qris" && (
+              <div className="space-y-4 animate-in fade-in duration-900">
+                <div>
+                  <label className="text-white text-sm block mb-2">
+                    Qris Transaction Status
+                  </label>
+                  <select className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary">
+                    <option value="Successful/ Paid">Successful/ Paid</option>
+                    <option value="Failed">Failed</option>
+                    <option value="Expired">Expired</option>
+                  </select>
+                </div>
                 <p className="text-xs text-gray-500 italic">
-                  * You will be redirected to Paypal to complete payment
+                  * Do not complete the transaction if:
+                  <p>- The status is still Pending</p>
+                  <p>- There is no notification of successful payment</p>
+                  <p>- Proof of payment has not been verified</p>
                 </p>
               </div>
             )}
@@ -241,55 +274,19 @@ export default function PaymentModal({
             )}
           </div>
 
-          {/* <div className="flex justify-between gap-4 w">
-            <div className="border-2 border-primary bg-search p-4 rounded-xl flex flex-col items-center gap-2 relative cursor-pointer">
-              <div className="absolute top-2 right-2 text-primary">
-                <IconCheck size={16} />
-              </div>
-              <IconCreditCard />
-              <span className="text-xs">Credit Card</span>
-            </div>
-            <div className="border border-gray-700 p-4 rounded-xl flex flex-col items-center gap-2 text-gray-500 cursor-pointer">
-              <IconBrandPaypal />
-              <span className="text-xs font-bold">Paypal</span>
-            </div>
-            <div className="border border-gray-700 p-4 rounded-xl flex flex-col items-center gap-2 text-gray-500 cursor-pointer">
-              <IconCash />
-              <span className="text-xs font-bold">Cash</span>
-            </div>
-          </div> */}
-
-          {/* Form Input (Levi Ackerman) */}
-          {/* <div className="space-y-4 mb-8">
-            <div>
-              <label className="text-white text-sm block mb-2">
-                Cardholder Name
-              </label>
-              <input
-                type="text"
-                defaultValue="Levi Ackerman"
-                className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none"
-              />
-            </div>
-            <div>
-              <label className="text-white text-sm block mb-2">
-                Card Number
-              </label>
-              <input
-                type="text"
-                defaultValue="2564 1421 0897 1244"
-                className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none"
-              />
-            </div>
-          </div> */}
+          <div className="mb-7 mt-auto border-t border-gray-700 pt-4">
+            <label className="text-white text-sm block mb-2 mt-2">
+              Table No.
+            </label>
+            <input
+              type="text"
+              placeholder="01"
+              className="w-full bg-search border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary"
+            />
+          </div>
 
           {/* TOTAL & ACTION */}
           <div className="mt-auto border-t border-gray-700 pt-4">
-            <div className="flex justify-between text-white font-bold text-xl mb-6">
-              <span>Total</span>
-              <span>$ {subtotal.toFixed(2)}</span>
-            </div>
-
             <div className="flex gap-4">
               <button
                 onClick={onClose}
@@ -298,7 +295,7 @@ export default function PaymentModal({
                 Cancel
               </button>
               <button className="flex-1 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/30">
-                Confirm
+                Confirm Payment
               </button>
             </div>
           </div>
