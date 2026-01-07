@@ -41,7 +41,7 @@ export default function PaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm">
-      <div className="bg-darkbg2 w-[850px] h-full flex shadow-2xl animate-in slide-in-from-right duration-300">
+      <div className="bg-darkbg2 w-[850px] h-full flex shadow-2xl animate-in slide-in-from-right duration-500">
         {/* BAGIAN 1: CONFIRMATION (Kiri) */}
         <div className="flex-1 p-8 border-r border-gray-700 overflow-y-auto">
           <button
@@ -114,14 +114,14 @@ export default function PaymentModal({
             <button
               type="button"
               onClick={() => setActivePaymentTab("Debit")}
-              className={`p-4 rounded-xl flex flex-col items-center gap-2 relative border-2 transition-all ${
+              className={`p-4 rounded-xl flex flex-col items-center gap-2 relative transition-all ${
                 activePaymentTab === "Debit"
-                  ? "border-primary bg-search text-white"
+                  ? "border-2 border-primary bg-search text-white"
                   : "border-gray-700 text-gray-500"
               }`}
             >
               {activePaymentTab === "Debit" && (
-                <IconClick
+                <IconCheck
                   size={16}
                   className="absolute top-2 right-2 text-primary"
                 />
@@ -135,7 +135,7 @@ export default function PaymentModal({
               onClick={() => setActivePaymentTab("Paypal")}
               className={`p-4 rounded-xl flex flex-col items-center gap-2 relative broder-2 transition-all ${
                 activePaymentTab === "Paypal"
-                  ? "border-primary bg-search text-white"
+                  ? "border-2 border-primary bg-search text-white"
                   : "border-gray-700 text-gray-500"
               }`}
             >
@@ -155,7 +155,7 @@ export default function PaymentModal({
               onClick={() => setActivePaymentTab("Cash")}
               className={`p-4 rounded-xl flex flex-col items-center gap-2 relative broder-2 transition-all ${
                 activePaymentTab === "Cash"
-                  ? "border-primary bg-search text-white"
+                  ? "border-2 border-primary bg-search text-white"
                   : "border-gray-700 text-gray-500"
               }`}
             >
@@ -174,7 +174,7 @@ export default function PaymentModal({
           <div className="space-y-4 mb-8 flex-1">
             {/* Tampilan Jika Pilih Debit */}
             {activePaymentTab === "Debit" && (
-              <div className="space-4 animate-in fade-in duration-300">
+              <div className="space-4 animate-in fade-in duration-900">
                 <div>
                   <label className="text-white text-sm block mb-2">
                     Cardholder Name
@@ -200,7 +200,7 @@ export default function PaymentModal({
 
             {/* Tampilan Jika Pilih PAYPAL */}
             {activePaymentTab === "Paypal" && (
-              <div className="space-y-4 animate-in fade-in duration-300">
+              <div className="space-y-4 animate-in fade-in duration-900">
                 <div>
                   <label className="text-white text-sm block mb-2">
                     Paypal Email
@@ -219,14 +219,16 @@ export default function PaymentModal({
 
             {/* Tampilan Jika Pilih CASH */}
             {activePaymentTab === "Cash" && (
-              <div className="space-y-4 animate-in fade-in duration-300">
+              <div className="space-y-4 animate-in fade-in duration-900">
                 <div>
-                  <label className="text-white text-sm block mb-2">Cash Amount Given</label>
-                  <input 
-                  type="number" 
-                  onChange={(e) => setCashReceived(Number(e.target.value))}
-                  className="w-full bg-search border border-primary/50 rounded-xl p-3 text-white text-xl font-bold  focus:border-primary"
-                  placeholder="0.00"
+                  <label className="text-white text-sm block mb-2">
+                    Cash Amount Given
+                  </label>
+                  <input
+                    type="number"
+                    onChange={(e) => setCashReceived(Number(e.target.value))}
+                    className="w-full bg-search border border-primary/50 rounded-xl p-3 text-white text-xl font-bold  focus:border-primary"
+                    placeholder="0.00"
                   />
                 </div>
                 <div className="bg-primary/10 p-4 rounded-xl border b border-primary/20">
