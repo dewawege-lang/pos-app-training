@@ -22,7 +22,7 @@ export default function MenuPage() {
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs[0]);
   const [orders, setOrders] = useState([]);
   const [activeBillingTab, setActiveBillingTab] = useState("Dine in");
-  const [activePaymentTab, setActivePaymentTab] =useState("Cash");
+  const [activePaymentTab, setActivePaymentTab] =useState("Debit");
 
   const [showPayment, setShowPayment] = useState(false);
   const currentOrders = orders.filter(o => o.type === activeBillingTab);
@@ -398,7 +398,8 @@ export default function MenuPage() {
         <PaymentModal
             orders={orders}
             setOrders={setOrders}
-            subtotal={orders.reduce((acc, curr) => acc + (curr.price * curr.qty), 0)}
+            activePaymentTab={activePaymentTab}
+            setActivePaymentTab={setActivePaymentTab}
             onClose={() => setShowPayment(false)}
             />
       )}

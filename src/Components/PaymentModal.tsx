@@ -7,9 +7,11 @@ import {
   IconCheck,
   IconBrandPaypal,
   IconCash,
+  IconClick,
 } from "@tabler/icons-react";
+import { act, useState } from "react";
 
-// 1. Tambahkan setOrders ke dalam list Props
+// Tambahkan setOrders ke dalam list Props
 export default function PaymentModal({
   orders,
   setOrders,
@@ -17,6 +19,11 @@ export default function PaymentModal({
   activePaymentTab,
   setActivePaymentTab,
 }) {
+  // 1. State menghitung uang kembalian
+  const [cashReceived, setCashReceived] = useState(0);
+  
+  const subtotal = orders.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
+
   // 2. Fungsi menghapus pesanan
   const deleteOrder = (itemToDelete) => {
     setOrders(
@@ -60,9 +67,7 @@ export default function PaymentModal({
                 <div className="flex justify-between items-center">
                   <div className="flex gap-4 items-center">
                     <div className="text-white">
-                      <p className="font-medium">
-                        {item.dishName}
-                      </p>
+                      <p className="font-medium">{item.dishName}</p>
                       <p className="text-sm text-gray-500">$ {item.price}</p>
                     </div>
                   </div>
@@ -103,25 +108,138 @@ export default function PaymentModal({
           </p>
 
           <h3 className="text-white font-medium mb-4">Payment Method</h3>
-          {/* Tab Payment */}
-          {/* <div className="grid grid-cols-3 gap-3 mb-8 text-white">
-            {PaymentTab.map((tab, index) =>(
-              <div
-              key={index}
-              onClick={() => setActivePaymentTab(tab)}
-              className={`border-2 border-primary bg-search p-4 rounded-xl flex flex-col items-center gap-2 relative cursor-pointer ${
-              activePaymentTab === tab
-                ? "text-primary border-b-3 font-semibold"
-                : ""
-              }`}
-              >
-                {tab}
-
-              </div>
-            ))}
-            </div> */}
           {/* Card Option Terpilih */}
-          <div className="flex justify-between gap-4 w">
+          <div className="grid grid-cols-3 gap-3 mb-8">
+            {/* TOMBOL CARD */}
+            <button
+              type="button"
+              onClick={() => setActivePaymentTab("Debit")}
+              className={`p-4 rounded-xl flex flex-col items-center gap-2 relative border-2 transition-all ${
+                activePaymentTab === "Debit"
+                  ? "border-primary bg-search text-white"
+                  : "border-gray-700 text-gray-500"
+              }`}
+            >
+              {activePaymentTab === "Debit" && (
+                <IconClick
+                  size={16}
+                  className="absolute top-2 right-2 text-primary"
+                />
+              )}
+              <IconCreditCard />
+              <span className="text-xs">Card</span>
+            </button>
+            {/* TOMBOL PAYPAL */}
+            <button
+              type="button"
+              onClick={() => setActivePaymentTab("Paypal")}
+              className={`p-4 rounded-xl flex flex-col items-center gap-2 relative broder-2 transition-all ${
+                activePaymentTab === "Paypal"
+                  ? "border-primary bg-search text-white"
+                  : "border-gray-700 text-gray-500"
+              }`}
+            >
+              {activePaymentTab === "Paypal" && (
+                <IconCheck
+                  size={16}
+                  className="absolute top-2 right-2 text-primary"
+                />
+              )}
+              <IconBrandPaypal />
+              <span className="text-xs">Paypal</span>
+            </button>
+
+            {/* TOMBOL CASH */}
+            <button
+              type="button"
+              onClick={() => setActivePaymentTab("Cash")}
+              className={`p-4 rounded-xl flex flex-col items-center gap-2 relative broder-2 transition-all ${
+                activePaymentTab === "Cash"
+                  ? "border-primary bg-search text-white"
+                  : "border-gray-700 text-gray-500"
+              }`}
+            >
+              {activePaymentTab === "Cash" && (
+                <IconCheck
+                  size={16}
+                  className="absolute top-2 right-2 text-primary"
+                />
+              )}
+              <IconCash />
+              <span className="text-xs">Cash</span>
+            </button>
+          </div>
+
+          {/* DYNAMIC FORM SECTION */}
+          <div className="space-y-4 mb-8 flex-1">
+            {/* Tampilan Jika Pilih Debit */}
+            {activePaymentTab === "Debit" && (
+              <div className="space-4 animate-in fade-in duration-300">
+                <div>
+                  <label className="text-white text-sm block mb-2">
+                    Cardholder Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Levi Ackerman"
+                    className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label className="text-white text-sm block mb-2">
+                    Card Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="2564 1421 0897 1244"
+                    className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Tampilan Jika Pilih PAYPAL */}
+            {activePaymentTab === "Paypal" && (
+              <div className="space-y-4 animate-in fade-in duration-300">
+                <div>
+                  <label className="text-white text-sm block mb-2">
+                    Paypal Email
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="example@paypal.com"
+                    className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 italic">
+                  * You will be redirected to Paypal to complete payment
+                </p>
+              </div>
+            )}
+
+            {/* Tampilan Jika Pilih CASH */}
+            {activePaymentTab === "Cash" && (
+              <div className="space-y-4 animate-in fade-in duration-300">
+                <div>
+                  <label className="text-white text-sm block mb-2">Cash Amount Given</label>
+                  <input 
+                  type="number" 
+                  onChange={(e) => setCashReceived(Number(e.target.value))}
+                  className="w-full bg-search border border-primary/50 rounded-xl p-3 text-white text-xl font-bold  focus:border-primary"
+                  placeholder="0.00"
+                  />
+                </div>
+                <div className="bg-primary/10 p-4 rounded-xl border b border-primary/20">
+                  <p className="text-gray-400 text-xs mb-1">Change</p>
+                  <p className="text-pretty text-2xl font-bold">
+                    $ {Math.max(0, cashReceived - subtotal).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* <div className="flex justify-between gap-4 w">
             <div className="border-2 border-primary bg-search p-4 rounded-xl flex flex-col items-center gap-2 relative cursor-pointer">
               <div className="absolute top-2 right-2 text-primary">
                 <IconCheck size={16} />
@@ -137,10 +255,10 @@ export default function PaymentModal({
               <IconCash />
               <span className="text-xs font-bold">Cash</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Form Input (Levi Ackerman) */}
-          <div className="space-y-4 mb-8">
+          {/* <div className="space-y-4 mb-8">
             <div>
               <label className="text-white text-sm block mb-2">
                 Cardholder Name
@@ -161,18 +279,13 @@ export default function PaymentModal({
                 className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none"
               />
             </div>
-          </div>
+          </div> */}
 
-          {/* TOTAL OTOMATIS */}
+          {/* TOTAL & ACTION */}
           <div className="mt-auto border-t border-gray-700 pt-4">
             <div className="flex justify-between text-white font-bold text-xl mb-6">
               <span>Total</span>
-              <span>
-                ${" "}
-                {orders
-                  .reduce((acc, curr) => acc + curr.price * curr.qty, 0)
-                  .toFixed(2)}
-              </span>
+              <span>$ {subtotal.toFixed(2)}</span>
             </div>
 
             <div className="flex gap-4">
