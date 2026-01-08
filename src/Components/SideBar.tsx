@@ -15,7 +15,7 @@ export default function SideBar() {
       {
         icon: <IconDashboard/>,
         title: "Dashboard",
-        url: "/"
+        url: "/dashboard"
       },
       {
         icon: <IconBurger/>,
@@ -25,7 +25,7 @@ export default function SideBar() {
       {
         icon: <IconSettingsCog/>,
         title: "Settings",
-        url: "/settings",
+        url: "/setting",
       },      
     ],
     footer:{}

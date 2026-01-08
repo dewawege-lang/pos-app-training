@@ -22,6 +22,7 @@ export default function PaymentModal({
 }) {
   // 1. State menghitung uang kembalian
   const [cashReceived, setCashReceived] = useState(0);
+  const [customerName, setCustomerName] = useState("");
   
   const subtotal = orders.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
 
@@ -40,11 +41,44 @@ export default function PaymentModal({
 
   const PaymentTab = ["Debit", "Paypal", "Cash"];
 
+  const handleConfirmPayment = () => {
+
+    if (!customerName.trim()) {
+      alert("Please enter customer name first!");
+      return;
+    }
+    //hitung total belanja
+    const subtotal = orders.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
+
+    //Ambil data lama dari localStorage (jika ada)
+    const existingReports = JSON.parse(localStorage.getItem("orderReports") || "[]");
+
+    //Buat objek laporan baru
+    const newReport = {
+      id: Date.now(),
+      customer: customerName, 
+      menu: orders.map(item => item.dishName).join(", "),
+      totalPayment: `$ ${subtotal.toFixed(2)}`,
+      status: "Completed",
+      color: "bg-green-500/20 text-green-500"
+    };
+
+    //Simpan kembali ke localStorage
+    localStorage.setItem("orderReports", JSON.stringify([newReport, ...existingReports]));
+
+    //Kosongkan Keranjang dan tutupi modal
+    setOrders([]);
+    onClose();
+    alert(`Payment Successful! for ${customerName}!`);
+
+    window.location.href = "/dashboard";
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm">
       <div className="bg-darkbg2 w-[850px] h-full flex shadow-2xl animate-in slide-in-from-right duration-500">
         {/* BAGIAN 1: CONFIRMATION (Kiri) */}
-        <div className="flex-1 p-8 border-r border-gray-700 overflow-y-auto">
+        <div className="flex-1 p-8 border-r border-gray-700 overflow-y-auto custom-scrollbar">
           <button
             onClick={onClose}
             className="text-white mb-6 hover:text-primary"
@@ -113,13 +147,27 @@ export default function PaymentModal({
         {/* BAGIAN 2: PAYMENT METHOD (Kanan) */}
         <div className="w-[380px] p-8 flex flex-col">
           <h2 className="text-2xl font-bold text-white mb-2">Payment</h2>
-          <p className="text-gray-400 mb-8 text-sm">
+          <p className="text-gray-400 mb-4 text-sm">
             3 payment methods available
           </p>
 
+          <div>
+            <label className="text-white text-sm block mb-2">
+              Customer Name
+            </label>
+            <input
+              type="text"
+              value={customerName} // Hubungkan ke state
+              onChange={(e) => setCustomerName(e.target.value)} // Update state saat mengetik
+              placeholder="E.g. Levi Ackerman"
+              className="w-full bg-search border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-primary mb-3"
+              required
+            />
+          </div>
+
           <h3 className="text-white font-medium mb-4">Payment Method</h3>
           {/* Card Option Terpilih */}
-          <div className="grid grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-3 gap-3 mb-3">
             {/* TOMBOL CARD */}
             <button
               type="button"
@@ -139,6 +187,7 @@ export default function PaymentModal({
               <IconCreditCard />
               <span className="text-xs">Card</span>
             </button>
+
             {/* TOMBOL PAYPAL */}
             <button
               type="button"
@@ -181,7 +230,7 @@ export default function PaymentModal({
           </div>
 
           {/* DYNAMIC FORM SECTION */}
-          <div className="space-y-4 mb-8 flex-1">
+          <div className="space-y-4 mb-3 flex-1">
             {/* Tampilan Jika Pilih Debit */}
             {activePaymentTab === "Debit" && (
               <div className="space-4 animate-in fade-in duration-900">
@@ -274,7 +323,7 @@ export default function PaymentModal({
             )}
           </div>
 
-          <div className="mb-7 mt-auto border-t border-gray-700 pt-4">
+          <div className="mb-3 mt-auto border-t border-gray-700 pt-1">
             <label className="text-white text-sm block mb-2 mt-2">
               Table No.
             </label>
@@ -285,7 +334,7 @@ export default function PaymentModal({
             />
           </div>
 
-          {/* TOTAL & ACTION */}
+          {/* ACTION */}
           <div className="mt-auto border-t border-gray-700 pt-4">
             <div className="flex gap-4">
               <button
@@ -294,7 +343,10 @@ export default function PaymentModal({
               >
                 Cancel
               </button>
-              <button className="flex-1 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/30">
+              <button
+                onClick={handleConfirmPayment}
+                className="flex-1 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/30"
+              >
                 Confirm Payment
               </button>
             </div>
