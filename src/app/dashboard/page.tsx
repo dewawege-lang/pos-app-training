@@ -158,10 +158,10 @@ export default function DashboardPage() {
                     className="w-14 h-14 rounded-full object-cover border-2 border-primary/20"
                   />
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-white leading-tight">
+                    <h4 className="text-lg font-medium text-white leading-tight">
                       {dish.name}
                     </h4>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 mt-1">
                       {dish.count} dishes ordered
                     </p>
                   </div>
@@ -192,7 +192,7 @@ function StatCard({ icon, title, value, percentage, up }) {
       <div className="flex items-center gap-3">
         <div className="p-2 bg-darkbg rounded-lg">{icon}</div>
         <span
-          className={`text-sm font-bold ${
+          className={`text-lg font-bold ${
             up ? "text-green-500" : "text-red-500"
           }`}
         >
