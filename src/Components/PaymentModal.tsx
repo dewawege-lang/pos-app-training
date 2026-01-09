@@ -50,6 +50,8 @@ export default function PaymentModal({
     //hitung total belanja
     const subtotal = orders.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
 
+    const orderType = orders.length > 0 ? orders[0].type : "Dine In";
+
     //Ambil data lama dari localStorage (jika ada)
     const existingReports = JSON.parse(localStorage.getItem("orderReports") || "[]");
 
@@ -60,7 +62,8 @@ export default function PaymentModal({
       menu: orders.map(item => item.dishName).join(", "),
       totalPayment: `$ ${subtotal.toFixed(2)}`,
       status: "Completed",
-      color: "bg-green-500/20 text-green-500"
+      color: "bg-green-500/20 text-green-500",
+      type: orderType
     };
 
     //Simpan kembali ke localStorage

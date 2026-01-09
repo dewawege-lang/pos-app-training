@@ -2,6 +2,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { IconCoin, IconBookmark, IconUsers } from "@tabler/icons-react";
 import { menus } from "@/data/menuData";
+import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis } from "recharts";
+import { report } from "process";
 
 export default function DashboardPage() {
   const [reports, setReports] = useState([]);
@@ -17,8 +19,10 @@ export default function DashboardPage() {
       amount: r.totalPayment || "0",
       status: r.status,
       color: r.color,
+      type: r.type,
     }));
     setReports(formattedReports);
+    console.log("Data Reports Terformat:", formattedReports);
   }, []);
 
   // Memastikan harga dihitung dengan aman
@@ -30,45 +34,79 @@ export default function DashboardPage() {
     }, 0);
   }, [reports]);
 
-  const { totalOrders, uniqueCustomers, mostOrderedDishes } = useMemo(() => {
-    // 1. Hitung Kemunculan Menu
-    const allDishes = reports.flatMap((r) =>
-      r.menu ? r.menu.split(", ") : []
-    );
-    const dishCounts = allDishes.reduce((acc, dish) => {
-      acc[dish] = (acc[dish] || 0) + 1;
-      return acc;
-    }, {});
+  const { totalOrders, uniqueCustomers, mostOrderedDishes, typeOfOrderData } =
+    useMemo(() => {
+      // 1. Hitung Kemunculan Menu
+      const allDishes = reports.flatMap((r) =>
+        r.menu ? r.menu.split(", ") : []
+      );
+      const dishCounts = allDishes.reduce((acc, dish) => {
+        acc[dish] = (acc[dish] || 0) + 1;
+        return acc;
+      }, {});
 
-    // 2. Ratakan Menu Data untuk cari gambar
-    const allMenuItems = menus
-      ? menus.flatMap((category) => category.items)
-      : [];
+      //Hitung Tipe Pesanan
+      const typeCounts = reports.reduce((acc, r) => {
+        let rawType = (r.type || "Dine In").toString().toLowerCase().trim(); //Default
 
-    // 3. Olah Most Ordered
-    const mostOrdered = Object.keys(dishCounts)
-      .map((name) => {
-        const menuItem = allMenuItems.find((item) => item.dishName === name);
-        return {
-          name,
-          count: dishCounts[name],
-          image: menuItem
-            ? menuItem.imgUrl
-            : `https://ui-avatars.com/api/?name=${name}&background=random`,
-        };
-      })
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 4);
+        let type ="Dine In"; //Default
+        if ( rawType === "take away" || rawType === "to go") {
+          type = "Take Away";
+        } else if (rawType === "delivery") {
+          type = "Delivery";
+        } else {
+          type = "Dine In";
+        }
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {});
 
-    return {
-      totalOrders: reports.length,
-      uniqueCustomers: new Set(reports.map((r) => r.name)).size,
-      mostOrderedDishes: mostOrdered,
-    };
-  }, [reports]);
+      const typeOfOrderData = [
+        {
+          name: "Dine In",
+          value: typeCounts["Dine In"] || 0,
+          fill: "#FF7CA3",
+        },
+        {
+          name: "Take Away",
+          value: typeCounts["Take Away"] || 0,
+          fill: "#FFB572",
+        },
+        {
+          name: "Delivery",
+          value: typeCounts["Delivery"] || 0,
+          fill: "#65B0F6",
+        },
+      ].reverse();
 
+      // 2. Ratakan Menu Data untuk cari gambar
+      const allMenuItems = menus
+        ? menus.flatMap((category) => category.items)
+        : [];
 
-  
+      // 3. Olah Most Ordered
+      const mostOrdered = Object.keys(dishCounts)
+        .map((name) => {
+          const menuItem = allMenuItems.find((item) => item.dishName === name);
+          return {
+            name,
+            count: dishCounts[name],
+            image: menuItem
+              ? menuItem.imgUrl
+              : `https://ui-avatars.com/api/?name=${name}&background=random`,
+          };
+        })
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 4);
+
+      return {
+        totalOrders: reports.length,
+        uniqueCustomers: new Set(reports.map((r) => r.name)).size,
+        mostOrderedDishes: mostOrdered,
+        typeOfOrderData,
+      };
+    }, [reports]);
+
   return (
     <div className="flex-1 p-8 bg-darkbg1 text-white h-screen overflow-hidden flex flex-col">
       <header className="mb-6 flex-shrink-0">
@@ -146,6 +184,7 @@ export default function DashboardPage() {
                 <option>Today</option>
               </select>
             </div>
+            <div className="border border-1 border-gray-700 mb-1 mt-1"></div>
             <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
               {mostOrderedDishes.map((dish, index) => (
                 <div
@@ -173,10 +212,49 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          <div className="bg-darkbg2 rounded-xl p-6 h-[320px] flex-shrink-0 shadow-lg">
-            <h3 className="text-xl font-bold mb-4">Most Type of Order</h3>
-            <div className="h-full flex items-center justify-center border-2 border-dashed border-gray-700 rounded-xl bg-darkbg/30">
-              <p className="text-gray-500 text-sm italic">Ready for Chart</p>
+          {/* MOST TYPE OF ORDER */}
+          <div className="bg-darkbg2 rounded-xl p-6 h-[320px] flex-shrink-0 shadow-lg flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-xl font-bold">Most Type of Order</h3>
+              <select className="bg-transparent text-sm text-gray-400 border border-gray-700 rounded-lg p-1 outline-none">
+                <option>Today</option>
+              </select>
+            </div>
+
+            <div className="flex-1 flex items-center justify-between">
+              {/* Chart Container */}
+              <div className="w-[200px] h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="30%"
+                      outerRadius="100%"
+                      barSize={15}
+                      data={typeOfOrderData}
+                      startAngle={90}
+                      endAngle={450}
+                    >
+                      <RadialBar
+                        background={{ fill: "#1f1d2b" }}
+                        cornerRadius={15}
+                        dataKey="value"
+                    />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Legend */}
+              <div className="space-y-4 pr-4">
+                {typeOfOrderData.map((item, idx) => (
+                  <LegendItem
+                    key={idx}
+                    colorCode={item.fill || item.color}
+                    title={item.name}
+                    value={`${item.value} customers`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -188,7 +266,7 @@ export default function DashboardPage() {
 // SUB KOMPONEN
 function StatCard({ icon, title, value, percentage, up }) {
   return (
-    <div className="bg-darkbg2 p-6 rounded-xl space-y-3 shadow-lg">
+    <div className="bg-darkbg2 p-5 rounded-xl space-y-3 shadow-lg">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-darkbg rounded-lg">{icon}</div>
         <span
@@ -231,5 +309,20 @@ function OrderRow({ name, menu, amount, status, color }) {
         </span>
       </td>
     </tr>
+  );
+}
+
+function LegendItem({ colorCode, title, value }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div
+        className="w-3 h-3 rounded-full mt-1"
+        style={{ backgroundColor: colorCode }}
+      ></div>
+      <div>
+        <p className="text-sm font-medium text-white leading-none">{title}</p>
+        <p className="text-xs text-gray-500 mt-1">{value}</p>
+      </div>
+    </div>
   );
 }
