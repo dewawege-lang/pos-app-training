@@ -14,12 +14,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useEffect } from "react";
 
 // 1. Definisi Schema Validasi
 const formSchema = z.object({
-  customerName: z.string().min(2, "Nama minimal 2 huruf"),
+  orderItems: z
+    .array(z.any())
+    .min(1, "Orders are still empty! Please select the menu first."),
   // Note: Untuk note per item biasanya menggunakan array,
-  // namun di sini kita gunakan satu field global atau biarkan uncontrolled sesuai layout asli.
 });
 
 export default function BillingSideBar({
@@ -40,15 +42,20 @@ export default function BillingSideBar({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      customerName: "",
+      orderItems: filteredOrders,
     },
   });
 
+  //Sinkronasi state 'orders' ke dalam internal form shadcn
+  //Agar saat item dihapus/ditambah, shadcn tahhu jumlah terbarunya
+  useEffect(() => {
+    form.setValue("orderItems", filteredOrders, { shouldValidate: true });
+  }, [filteredOrders, form]);
+
   // 3. Handler saat tombol "Continue" diklik (Submit)
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Data Pelanggan:", values);
-    console.log("Daftar Pesanan:", filteredOrders);
-    onContinue(); // Menjalankan fungsi original kamu
+    //jika sampai sini, berarti validasi .min(1) terpenuhi
+    onContinue();
   };
 
   const deleteOrder = (itemToReduce) => {
@@ -93,26 +100,6 @@ export default function BillingSideBar({
             </div>
           </div>
 
-          {/* INPUT DATA BARU: Customer Name (Menggunakan konsep Shadcn) */}
-          <div className="mb-4">
-            <FormField
-              control={form.control}
-              name="customerName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <input
-                      {...field}
-                      placeholder="Input Customer Name..."
-                      className="w-full bg-search rounded-xl h-11 px-4 text-white text-sm border border-gray-700 focus:outline-none focus:border-primary transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-400 text-xs mt-1" />
-                </FormItem>
-              )}
-            />
-          </div>
-
           {/* Tabs Billing */}
           <div className="flex gap-3 mb-6">
             {tabs.map((tab, index) => (
@@ -138,7 +125,16 @@ export default function BillingSideBar({
             <p className="col-span-3 pl-4 text-center text-sm">Price</p>
           </div>
 
-          {/* Scrollable order list */}
+          {/* Scrollable order list validasi dengan formfield (hidden)*/}
+          <FormField
+            control={form.control}
+            name="orderItems"
+            render={() => (
+              <FormItem className="flex-1 flex flex-col overflow-hidden mt-4">
+                {/* Eror message diletakkan di atas daftar menu */}
+                <FormMessage className="bg-red-500/10 border-red-500/10 text-red-400 p-3 rounded-lg text-center mb-4 animate-in fade-in zoom-in duration-300" />
+
+                <FormControl>
           <div className="flex-1 overflow-y-auto mt-4 space-y-6 pr-2 custom-scrollbar">
             {filteredOrders.length > 0 ? (
               filteredOrders.map((item, idx) => (
@@ -151,7 +147,7 @@ export default function BillingSideBar({
                         width={50}
                         height={50}
                         className="drop-shadow-2xl"
-                      />
+                        />
                     </div>
                     <div className="col-span-6">
                       <p className="font-medium truncate">{item.dishName}</p>
@@ -175,12 +171,12 @@ export default function BillingSideBar({
                       type="text"
                       placeholder="Order note..."
                       className="flex-1 bg-search rounded-xl h-11 px-4 text-white text-xs border border-gray-700 focus:outline-none focus:border-primary"
-                    />
+                      />
                     <button
                       type="button" // PENTING: Agar klik hapus tidak men-submit form
                       onClick={() => deleteOrder(item)}
                       className="p-2.5 border border-red-500/50 rounded-xl text-red-500 hover:bg-red-500 hover:text-white transition-all"
-                    >
+                      >
                       <IconTrash size={18} />
                     </button>
                   </div>
@@ -191,7 +187,11 @@ export default function BillingSideBar({
                 No orders for {activeBillingTab}
               </div>
             )}
-          </div>
+        </div>
+        </FormControl>
+      </FormItem>
+    )}
+  />
 
           {/* Total Footer */}
           <div className="border-t border-gray-700 pt-5 mt-auto">
@@ -202,8 +202,7 @@ export default function BillingSideBar({
             <div className="flex justify-between text-white font-bold text-xl mb-6">
               <span>Subtotal</span>
               <span>
-                ${" "}
-                {filteredOrders
+                $ {filteredOrders
                   .reduce((acc, curr) => acc + curr.price * curr.qty, 0)
                   .toFixed(2)}
               </span>

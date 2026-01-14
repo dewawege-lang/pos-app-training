@@ -138,7 +138,7 @@ export default function PaymentModal({
           </div>
 
           {/* TOTAL */}
-          <div className="mt-5 mb-[-10px] px-2">end</div>
+          <div className="mt-5 mb-[-10px] px-2"></div>
           <div className=" fixed bottom-1 w-[420px] z-50 border-t mb-[-5] border-gray-700 py-3 bg-darkbg2">
             <div className="flex justify-between text-white font-bold text-xl mb-1">
               <span>Total</span>
