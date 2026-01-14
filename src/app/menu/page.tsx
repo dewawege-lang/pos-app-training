@@ -1,10 +1,14 @@
 "use client";
 
-import { IconCaretDownFilled, IconCaretUpDownFilled, IconSearch } from "@tabler/icons-react";
+import {
+  IconCaretDownFilled,
+  IconCaretUpDownFilled,
+  IconSearch,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import { useState } from "react";
-import BillingSideBar from "@/Components/BillingSideBar";
-import PaymentModal from "@/Components/PaymentModal";
+import BillingSideBar from "@/components/BillingSideBar";
+import PaymentModal from "@/components/PaymentModal";
 import { menus } from "@/data/menuData";
 
 export default function MenuPage() {
@@ -19,15 +23,17 @@ export default function MenuPage() {
     "Desert",
   ];
 
-  
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs[0]);
   const [orders, setOrders] = useState([]);
   const [activeBillingTab, setActiveBillingTab] = useState("Dine in");
-  const [activePaymentTab, setActivePaymentTab] =useState("Debit");
+  const [activePaymentTab, setActivePaymentTab] = useState("Debit");
 
   const [showPayment, setShowPayment] = useState(false);
-  const currentOrders = orders.filter(o => o.type === activeBillingTab);
-  const subtotal = currentOrders.reduce((acc, curr) => acc+ (curr.price * curr.qty), 0);
+  const currentOrders = orders.filter((o) => o.type === activeBillingTab);
+  const subtotal = currentOrders.reduce(
+    (acc, curr) => acc + curr.price * curr.qty,
+    0
+  );
 
   const addToOrder = (item) => {
     setOrders((prevOrders) => {
