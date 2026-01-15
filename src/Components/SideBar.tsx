@@ -1,9 +1,8 @@
 'use client'
 
-import { IconBuilding, IconBuildingStore, IconBurger, IconDashboard, IconLogout, icons, IconSettingsCog } from "@tabler/icons-react";
+import { IconBuildingStore, IconBurger, IconDashboard, IconSettingsCog } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import SidebarUserInfo from "./sidebarUserInfo";
 import { IUser } from "@/@types/user.type";
 
