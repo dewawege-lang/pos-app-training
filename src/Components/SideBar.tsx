@@ -12,7 +12,6 @@ interface ISideBarProps {
 
 export default function SideBar(props: ISideBarProps) {
   const [user, setUser] = useState<any>(null)
-  console.log(user)
 
   const handleFetchUserCredential = async () => {
     fetch("https://dummyjson.com/users/16")
