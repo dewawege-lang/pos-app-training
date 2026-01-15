@@ -1,3 +1,9 @@
+export default function Page() {
+  return (
+    <div></div>
+  );
+}
+
 // "use client";
 // import React, { useEffect, useState, useMemo } from "react";
 // import { IconCoin, IconBookmark, IconUsers } from "@tabler/icons-react";

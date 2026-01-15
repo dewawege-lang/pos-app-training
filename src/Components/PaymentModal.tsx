@@ -1,3 +1,9 @@
+export default function PaymentModal() {
+  return (
+    <div></div>
+  );
+}
+
 // "use client";
 // import {
 //   IconArrowLeft,
