@@ -12,6 +12,8 @@ import {
   ItemSeparator,
   ItemTitle,
 } from "@/components/ui/item";
+import { IUser } from "@/@types/user.type";
+
 
 export default async function usersPage() {
   const data = await fetch("https://dummyjson.com/users", {
@@ -22,7 +24,7 @@ export default async function usersPage() {
   return (
     <div className="flex w-full max-w-md flex-col gap-6">
       <ItemGroup>
-        {people.map((person:any, index:number) => (
+        {people.map((person:IUser, index:number) => (
           <React.Fragment key={person.username}>
             <Item>
               <ItemMedia>

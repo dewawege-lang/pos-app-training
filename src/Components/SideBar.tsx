@@ -5,13 +5,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import SidebarUserInfo from "./sidebarUserInfo";
+import { IUser } from "@/@types/user.type";
 
 interface ISideBarProps {
   textTheme: string
 }
 
 export default function SideBar(props: ISideBarProps) {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<IUser|null>(null)
 
   const handleFetchUserCredential = async () => {
     fetch("https://dummyjson.com/users/16")

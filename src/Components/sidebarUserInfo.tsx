@@ -1,9 +1,10 @@
 import { IconLogout } from "@tabler/icons-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { IUser } from "@/@types/user.type";
 
 interface ISidebarUserInfoProps {
   sidebarStatus: boolean
-  userData: any
+  userData: IUser|null
   textTheme: string
 }
 
@@ -14,7 +15,7 @@ export default function SidebarUserInfo(props: ISidebarUserInfoProps) {
         <div className="flex text-sm font-medium gap-2">
           {/* <div className="size-12 bg-primary rounded-full centered">AV</div> */}
           <Avatar>
-            <AvatarImage src={props.userData && props.userData.image} />
+            <AvatarImage src={props.userData?.image} />
             <AvatarFallback>AV</AvatarFallback>
           </Avatar>
 
